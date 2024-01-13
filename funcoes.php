@@ -112,29 +112,30 @@ function salvarEmCSV($infoArray) {
         fputcsv($handle, $titulos, ';');
     }
 
-    // Extrai a data e o valor da segunda posição do array (se existir)
-    if (isset($infoArray[2])) {
-        $dataEValorSegundoLeilao = extrairDataEValor($infoArray[2]);
-        $infoArray[3] = $dataEValorSegundoLeilao['data'];
-        $infoArray[4] = $dataEValorSegundoLeilao['valor'];
-    } else {
-        // Se não houver segundo leilão, define valores vazios
-        $infoArray[3] = '';
-        $infoArray[4] = '';
-    }
+    print_r($infoArray);
 
-    // Extrai a data e o valor da primeira posição do array
-    $dataEValorPrimeiroLeilao = extrairDataEValor($infoArray[1]);
-    $infoArray[1] = $dataEValorPrimeiroLeilao['data'];
-    $infoArray[2] = $dataEValorPrimeiroLeilao['valor'];
+    $arrayParaCsv = [ ];
+
+        $arrayParaCsv[0] = $infoArray[0];
+
+        $dataEValorPrimeiroLeilao = extrairDataEValor($infoArray[1]);
+        $arrayParaCsv[1] = $dataEValorPrimeiroLeilao['data'];
+        $arrayParaCsv[2] = $dataEValorPrimeiroLeilao['valor'];
+ 
+        $dataEValorSegundoLeilao = extrairDataEValor($infoArray[2]);
+        $arrayParaCsv[3] = $dataEValorSegundoLeilao['data'];
+        $arrayParaCsv[4] = $dataEValorSegundoLeilao['valor'];
+    
 
     // Itera sobre os elementos do array, converte para UTF-8 e remove quebras de linha
-    foreach ($infoArray as &$element) {
+    foreach ($arrayParaCsv as &$element) {
         $element = utf8_encode(str_replace(["\n", "\r"], '', trim($element)));
     }
 
+    print_r($arrayParaCsv);
+
     // Escreve os dados no arquivo CSV
-    fputcsv($handle, $infoArray, ';');
+    fputcsv($handle, $arrayParaCsv, ';');
 
     // Fecha o arquivo CSV
     fclose($handle);
@@ -143,14 +144,15 @@ function salvarEmCSV($infoArray) {
 function extrairDataEValor($str) {
     // Extrai a data no formato dd/mm/aaaa usando expressão regular
     preg_match('/(\d{2}\/\d{2}\/\d{4})/', $str, $matches);
-    $data = $matches[0];
+
+    // Inicializa data como vazia caso não haja correspondência
+    $data = isset($matches[0]) ? $matches[0] : '';
 
     // Extrai o valor após "R$"
     $valor = trim(str_replace('.', '', substr($str, strpos($str, 'R$') + 2)));
 
     return array('data' => $data, 'valor' => $valor);
 }
-
 
 function processarLote($url, $tipo) {
 
@@ -250,7 +252,7 @@ function buscaLeiloes($url, $tipo) {
     foreach ($filteredLinks as $link) {
         if (strpos($link, 'https://amleiloeiro.com.br/leilao/') === 0) {
             $array_leilao[] = $link;
-        } elseif (strpos($link, 'https://amleiloeiro.com.br/encerrados?page') === 0) {
+        } elseif (strpos($link, 'https://amleiloeiro.com.br/encerrados?page=2') === 0) {
             // Acessa a página e obtém os links de leilão
             $array_leilao  = array_merge($array_leilao , getLeilaoLinks($link));
         }
