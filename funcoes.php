@@ -116,18 +116,37 @@ function salvarEmCSV($infoArray) {
 
         $arrayParaCsv[0] = $infoArray[0];
 
-        $dataEValorPrimeiroLeilao = extrairDataEValor($infoArray[1]);
-        $arrayParaCsv[1] = $dataEValorPrimeiroLeilao['data'];
-        $arrayParaCsv[2] = $dataEValorPrimeiroLeilao['valor'];
- 
-        $dataEValorSegundoLeilao = extrairDataEValor($infoArray[2]);
-        $arrayParaCsv[3] = $dataEValorSegundoLeilao['data'];
-        $arrayParaCsv[4] = $dataEValorSegundoLeilao['valor'];
+
+        if(isset($infoArray[1])){
+
+            $dataEValorPrimeiroLeilao = extrairDataEValor($infoArray[1]);
+            $arrayParaCsv[1] = $dataEValorPrimeiroLeilao['data'];
+            $arrayParaCsv[2] = $dataEValorPrimeiroLeilao['valor'];
+
+        } else {
+
+            $arrayParaCsv[1] = '';
+            $arrayParaCsv[2] = '';
+        }
+
+       
+        if(isset($infoArray[2])){
+
+            $dataEValorSegundoLeilao = extrairDataEValor($infoArray[2]);
+            $arrayParaCsv[3] = $dataEValorSegundoLeilao['data'];
+            $arrayParaCsv[4] = $dataEValorSegundoLeilao['valor'];
+
+        } else{
+
+            $arrayParaCsv[3] = '';
+            $arrayParaCsv[4] = '';
+        }
+        
     
 
     // Itera sobre os elementos do array, converte para UTF-8 e remove quebras de linha
     foreach ($arrayParaCsv as &$element) {
-        $element = utf8_encode(str_replace(["\n", "\r"], '', trim($element)));
+        $element = str_replace(["\n", "\r"], '', trim($element));
     }
 
     fputcsv($handle, $arrayParaCsv, ';');

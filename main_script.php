@@ -6,4 +6,6 @@
 
     buscaLeiloes('https://amleiloeiro.com.br/agenda', 'agendados');
 
+    echo 'Script finalizado! Verifique o csv'
+
 ?>
