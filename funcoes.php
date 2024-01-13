@@ -1,6 +1,9 @@
 <?php
 
 function getLeilaoLinks($url) {
+
+    echo 'Obtendo link do leilão';
+
     $curl = curl_init($url);
 
     // Desativa verificações SSL. Pode testar com o parâmetro true, se caso não der, altere novamente para false
@@ -43,6 +46,9 @@ function getLeilaoLinks($url) {
 
 
 function getLoteLinks($url) {
+
+    echo 'Obtendo link do lote';
+
     $curl = curl_init($url);
 
     // Desativa verificações SSL. Pode testar com o parâmetro true, se caso não der, altere novamente para false
@@ -84,6 +90,8 @@ function getLoteLinks($url) {
 }
 
 function salvarEmCSV($infoArray) {
+
+    echo 'Salvando no CSV';
  
     $csvFile = 'leilao-lotes.csv';
 
@@ -107,6 +115,9 @@ function salvarEmCSV($infoArray) {
 
 
 function processarLote($url, $tipo) {
+
+    echo 'Obtendo informações do lote';
+
     $curl = curl_init($url);
 
     // Desativa verificações SSL. Pode testar com o parâmetro true, se caso não der, altere novamente para false
@@ -150,14 +161,14 @@ function processarLote($url, $tipo) {
     // Adiciona o URL no início do array
     array_unshift($infoArray, $url);
 
-    echo 'Chamou a processarLote ';
-    print_r($infoArray);
-
     salvarEmCSV($infoArray);
 }
 
 
 function buscaLeiloes($url, $tipo) {
+
+    echo 'Buscando leilões' . $tipo;
+
     $curl = curl_init($url);
 
     // Desativa verificações SSL. Pode testar com o parâmetro true, se caso não der, altere novamente para false
