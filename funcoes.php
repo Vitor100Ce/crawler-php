@@ -2,7 +2,7 @@
 
 function getLeilaoLinks($url) {
 
-    echo 'Obtendo link do leilão';
+    echo 'Obtendo link do leilão' . "\n";
 
     $curl = curl_init($url);
 
@@ -47,7 +47,7 @@ function getLeilaoLinks($url) {
 
 function getLoteLinks($url) {
 
-    echo 'Obtendo link do lote';
+    echo 'Obtendo link do lote' . "\n";
 
     $curl = curl_init($url);
 
@@ -90,21 +90,48 @@ function getLoteLinks($url) {
 }
 
 function salvarEmCSV($infoArray) {
+    echo 'Salvando no CSV' . "\n";
 
-    echo 'Salvando no CSV';
- 
     $csvFile = 'leilao-lotes.csv';
+
+    // Verifica se o arquivo já existe
+    $fileExists = file_exists($csvFile);
+
+    // Abre ou cria o arquivo CSV para escrita
+    $handle = fopen($csvFile, 'a');
+
+    // Se o arquivo não existir, adiciona os títulos
+    if (!$fileExists) {
+        $titulos = array(
+            'link_lote',
+            'primeiro_leilao_data',
+            'primeiro_leilao_valor',
+            'segundo_leilao_data',
+            'segundo_leilao_valor'
+        );
+        fputcsv($handle, $titulos, ';');
+    }
+
+    // Extrai a data e o valor da segunda posição do array (se existir)
+    if (isset($infoArray[2])) {
+        $dataEValorSegundoLeilao = extrairDataEValor($infoArray[2]);
+        $infoArray[3] = $dataEValorSegundoLeilao['data'];
+        $infoArray[4] = $dataEValorSegundoLeilao['valor'];
+    } else {
+        // Se não houver segundo leilão, define valores vazios
+        $infoArray[3] = '';
+        $infoArray[4] = '';
+    }
+
+    // Extrai a data e o valor da primeira posição do array
+    $dataEValorPrimeiroLeilao = extrairDataEValor($infoArray[1]);
+    $infoArray[1] = $dataEValorPrimeiroLeilao['data'];
+    $infoArray[2] = $dataEValorPrimeiroLeilao['valor'];
 
     // Itera sobre os elementos do array, converte para UTF-8 e remove quebras de linha
     foreach ($infoArray as &$element) {
         $element = utf8_encode(str_replace(["\n", "\r"], '', trim($element)));
     }
-
-    // Abre ou cria o arquivo CSV para escrita
-    $handle = fopen($csvFile, 'a');
-
-    // Define a codificação UTF-8
-    fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
 
     // Escreve os dados no arquivo CSV
     fputcsv($handle, $infoArray, ';');
@@ -113,10 +140,21 @@ function salvarEmCSV($infoArray) {
     fclose($handle);
 }
 
+function extrairDataEValor($str) {
+    // Extrai a data no formato dd/mm/aaaa usando expressão regular
+    preg_match('/(\d{2}\/\d{2}\/\d{4})/', $str, $matches);
+    $data = $matches[0];
+
+    // Extrai o valor após "R$"
+    $valor = trim(str_replace('.', '', substr($str, strpos($str, 'R$') + 2)));
+
+    return array('data' => $data, 'valor' => $valor);
+}
+
 
 function processarLote($url, $tipo) {
 
-    echo 'Obtendo informações do lote';
+    echo 'Obtendo informações do lote' . "\n";
 
     $curl = curl_init($url);
 
@@ -167,7 +205,7 @@ function processarLote($url, $tipo) {
 
 function buscaLeiloes($url, $tipo) {
 
-    echo 'Buscando leilões' . $tipo;
+    echo 'Buscando leilões' . ' ' . $tipo . "\n";
 
     $curl = curl_init($url);
 
