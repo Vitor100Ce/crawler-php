@@ -112,8 +112,6 @@ function salvarEmCSV($infoArray) {
         fputcsv($handle, $titulos, ';');
     }
 
-    print_r($infoArray);
-
     $arrayParaCsv = [ ];
 
         $arrayParaCsv[0] = $infoArray[0];
@@ -132,23 +130,19 @@ function salvarEmCSV($infoArray) {
         $element = utf8_encode(str_replace(["\n", "\r"], '', trim($element)));
     }
 
-    print_r($arrayParaCsv);
-
-    // Escreve os dados no arquivo CSV
     fputcsv($handle, $arrayParaCsv, ';');
 
-    // Fecha o arquivo CSV
     fclose($handle);
 }
 
 function extrairDataEValor($str) {
-    // Extrai a data no formato dd/mm/aaaa usando expressão regular
+    // Extrai a data no formato dd/mm/aaaa
     preg_match('/(\d{2}\/\d{2}\/\d{4})/', $str, $matches);
 
     // Inicializa data como vazia caso não haja correspondência
     $data = isset($matches[0]) ? $matches[0] : '';
 
-    // Extrai o valor após "R$"
+    // Extrai o valor
     $valor = trim(str_replace('.', '', substr($str, strpos($str, 'R$') + 2)));
 
     return array('data' => $data, 'valor' => $valor);
