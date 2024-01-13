@@ -246,7 +246,7 @@ function buscaLeiloes($url, $tipo) {
     foreach ($filteredLinks as $link) {
         if (strpos($link, 'https://amleiloeiro.com.br/leilao/') === 0) {
             $array_leilao[] = $link;
-        } elseif (strpos($link, 'https://amleiloeiro.com.br/encerrados?page=2') === 0) {
+        } elseif (strpos($link, 'https://amleiloeiro.com.br/encerrados?page') === 0) {
             // Acessa a página e obtém os links de leilão
             $array_leilao  = array_merge($array_leilao , getLeilaoLinks($link));
         }
